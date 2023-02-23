@@ -18,15 +18,37 @@ function App() {
     setEnd({ x, y });
   };
 
-  const onMouseMove = (e) => {
-    if (!drawState) {
-      return;
-    }
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setEnd({ x, y });
-  };
+    const onMouseMove = (e) => {
+      if (!drawState) {
+        return;
+      }
+
+      const rect = canvasRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const context = canvasRef.current.getContext("2d");
+      context.setLineDash([5, 5]);
+
+      // Clear previous dashed border
+      context.clearRect(start.x, start.y, end.x - start.x, end.y - start.y);
+
+      // Draw white rectangle over previous dashed border
+      context.beginPath();
+      context.fillStyle = "#ffffff";
+      context.rect(start.x, start.y, end.x - start.x, end.y - start.y);
+      context.fill();
+      context.closePath();
+
+      // Update end coordinates and draw new dashed border
+      setEnd({ x, y });
+      context.beginPath();
+      context.strokeStyle = color;
+      context.rect(start.x, start.y, x - start.x, y - start.y);
+      context.stroke();
+      context.closePath();
+    };
+
 
   const onMouseUp = (e) => {
     setDrawState(false);
@@ -34,6 +56,7 @@ function App() {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const context = canvasRef.current.getContext("2d");
+    context.setLineDash([]);
     context.beginPath();
     context.rect(start.x, start.y, x - start.x, y - start.y);
     context.fillStyle = color;
