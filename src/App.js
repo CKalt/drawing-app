@@ -1,3 +1,4 @@
+// Version 2.3
 import React, { useState, useRef } from "react";
 import CanvasDraw from "react-canvas-draw";
 
